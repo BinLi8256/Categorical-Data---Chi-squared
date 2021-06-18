@@ -1,17 +1,22 @@
 ---
 title: "Chi-squared test of Independence"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Bin Li"
 output: html_document
 ---
 
 #### Chi-squared Test of Independence
 
-The chi-squared test of independence is used to evaluate if there is any association between two categorical variables by analyzing the contigency table. For example, is smoking associated with gender? Chi-squared test only tells us if there is an relationship between the two variables. It is not supposed to tell what kind of relationship it is.
+The chi-squared test of independence is used to evaluate if there is any association between two categorical variables by analyzing the contingency table. For example, is smoking associated with gender? Chi-squared test only tells us if there is an relationship between the two variables. It is not supposed to tell what kind of relationship it is.
 <br>
 
 #### An example
 
-This example is about whether the contract type is related to charge off. This is a real world probelm. I will just simulate the data to illustrate this example.
+This example is about whether the contract type is related to charge off. This is a real world problem. I will just simulate the data to illustrate this example.
 <br>
 
 **1. Data overview**
