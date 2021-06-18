@@ -1,0 +1,132 @@
+---
+title: "Chi-squared test of Independence"
+---
+
+#### Chi-squared Test of Independence
+
+The chi-squared test of independence is used to evaluate if there is any association between two categorical variables by analyzing the contingency table. For example, is smoking associated with gender? Chi-squared test only tells us if there is an relationship between the two variables. It is not supposed to tell what kind of relationship it is.
+<br>
+
+#### An example
+
+This example is about whether the contract type is related to charge off. This is a real world problem. I will just simulate the data to illustrate this example.
+<br>
+
+**1. Data overview**
+```{r}
+contract = c("Type 1", "Type 2","Type 3","Type 4")
+sim.data = as.data.frame(cbind(rep(contract, c(20000, 1000, 10000, 6000)),
+                               rep(rep(c(0:1), times = 4), c(19820, 180, 993, 7, 9900, 100, 5910, 90))))
+  
+colnames(sim.data) = c("contract_type", "charge_off")
+sim.data$charge_off = as.factor(sim.data$charge_off)
+sim.data$contract_type = as.factor(sim.data$contract_type)
+# in charge off column, 0 = Non-charge off account, 1 = charge off account
+head(sim.data)
+
+
+```
+<br>
+
+**2.Contingency Table**
+<br>
+
+The table *all.table* lists the number of each contract type. *con.table* is the contingency table between charge off and contract type. The row is charge off and column is contract type. The percentage of grand total and charge off for each contract type is also shown. We can notice that the percentages distribution grand total and charge off have some differences. This is a signal of association between charge off and contract type.
+
+```{r, message=FALSE}
+#contingency table
+all.table = table(Contract = sim.data$contract_type)
+all.table
+con.table = table(ChargeOff = sim.data$charge_off, Contract = sim.data$contract_type)
+con.table
+
+library(RcmdrMisc)
+library(tidyverse)
+#percentage of grand total
+(all.table %>% prop.table()) * 100
+#row percentage
+rowPercents(con.table, 2)
+
+```
+<br>
+
+**3.Chi-squared test**
+<br>
+
+Chi-squared test evaluate if the row variable and column variable are significantly associated.
+<br>
+
+* Hypothesis  
+$H_{0}$: The two variables are independent    
+$H_{a}$: The two variables are not independent    
+
+* Test statistic    
+For each cell in the contingency table, we need to compute the expected value under the null hypothesis. The expected value
+is  
+
+$$e_{ij} = \frac{o_{i}*o_{j}}{N}$$    
+    where $o_{i}$ is a marginal column frequency  
+          $o_{j}$ is a marginal row frequency  
+          $N$ is the total sample size  
+<br>
+
+    Chi-squared test statistic is   
+$$\chi^2 = \sum\frac{(o_{ij} - e_{ij})^2}{e_{ij}}$$  
+where $o_{ij}$ is observed value and $e_{ij}$ is expected value.
+<br>
+
+* Degree of Freedom
+$$df = (r-1)(c-1)$$
+
+    where r and c are the number of category for each variable respectively.
+
+<br>
+
+* chisq.test Function in R
+```{r}
+sim.test = chisq.test(sim.data$charge_off, sim.data$contract_type)
+sim.test
+```
+<br>
+
+* Make a conclusion    
+
+The p-value is quite small, at least less than 0.05. Then we need to reject the null hypothesis and conclude that there is some association between charge off and contract type.  
+<br>
+
+* Observed, Expected values, and Residual    
+
+We can also obtain the observed and expected values and residuals from the result. The sign associated with residuals is also important. It indicates the association between the two variables.    
+<br>
+
+Positive residuals can be interpreted as there is a positive association between the corresponding row and column. E.g. Type 4 is positively related to charge off. Negative residuals tells a negative association between those corresponding categories.    
+<br>
+
+```{r}
+#observed value
+obs = sim.test$observed
+obs
+
+#expected value
+exp = round(sim.test$expected, 2)
+exp
+
+#residual
+res = round(sim.test$residuals, 2)
+res
+```
+<br>
+
+**4.Fisher's exact test**
+<br>
+
+In some situation, the cell counts are small, usually less than 5. Chi-squared test is not applicable. We need to use fisher's exact test to test independence between two categorical variables. **fisher.test** function in R can achieve similar results as chisq.test function.
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+

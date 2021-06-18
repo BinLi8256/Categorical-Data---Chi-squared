@@ -1,0 +1,9 @@
+name: "Chi-squared test of Independence"
+output_dir: "docs"
+output:
+  html_document:
+   theme: flatly
+navbar:
+  title: "Categorical Data Analysis"
+  text: "Chi-squared Test"
+  href: index.html
